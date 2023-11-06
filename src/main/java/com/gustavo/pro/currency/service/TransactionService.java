@@ -6,19 +6,21 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class TransactionService {
 
     @Autowired
     TransactionRepository transactionRepository;
 
-    public ResponseEntity<?> checkValidTransactionSaveInDatabase(TransactionEntity transaction) {
+    public TransactionEntity checkValidTransactionSaveInDatabase(TransactionEntity transaction) {
         TransactionEntity te = this.transactionRepository.save(transaction);
-        return ResponseEntity.ok(te);
+        return te;
     }
 
     public TransactionEntity getTransactionFromId(long transactionId) {
-        TransactionEntity te = this.transactionRepository.getById(transactionId);
-        return te;
+        Optional<TransactionEntity> te = this.transactionRepository.findById(transactionId);
+        return te.get();
     }
 }
