@@ -3,8 +3,8 @@ package com.gustavo.pro.currency.service.conversion.model;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Date;
 
 @Data
 public class CurrencyConversionModel {
@@ -12,12 +12,13 @@ public class CurrencyConversionModel {
 
     CurrencyConversionModel() {}
 
+    @Data
     public static class CurrencyItem {
 
         CurrencyItem() {}
 
         @JsonProperty("record_date")
-        private Date recordDate;
+        private LocalDate recordDate;
         @JsonProperty
         private String country;
         @JsonProperty("currency")

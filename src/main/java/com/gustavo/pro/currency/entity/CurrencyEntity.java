@@ -5,7 +5,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "currency")
@@ -19,7 +19,7 @@ public class CurrencyEntity implements Serializable {
     @JsonProperty("id")
     private Long id;
 
-    private Date date;
+    private LocalDate date;
 
     private String currencyName;
 
@@ -27,7 +27,7 @@ public class CurrencyEntity implements Serializable {
 
     private String country;
 
-    CurrencyEntity(Date date, String currencyName, Double rate, String country) {
+    CurrencyEntity(LocalDate date, String currencyName, Double rate, String country) {
         this.date = date;
         this.currencyName = currencyName;
         this.rate = rate;

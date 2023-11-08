@@ -5,11 +5,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.ArrayList;
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Service
 public class CurrencyApiQuery {
@@ -17,14 +16,15 @@ public class CurrencyApiQuery {
 
 
 
-    public List<CurrencyConversionModel.CurrencyItem> getCurrencyListByDate() {
+    public List<CurrencyConversionModel.CurrencyItem> getCurrencyListByDate(LocalDate date) {
         String currencyApiUrl = new StringBuilder()
-                .append("https://api.fiscaldata.treasury.gov/services/api/fiscal_service/v1/accounting/od/rates_of_exchange")
-                .append("?filter=record_date:eq:2021-09-30")
-                .append("&fields=record_date,country,currency,exchange_rate")
-                .append("&sort=country")
-                .append("&page[number]=")
-                .toString();
+            .append("https://api.fiscaldata.treasury.gov/services/api/fiscal_service/v1/accounting/od/rates_of_exchange")
+            .append("?filter=record_date:eq:")
+            .append(date.getMonth()).append("-").append(date.getMonthValue()).append("-") .append(date.getDayOfMonth())
+            .append("&fields=record_date,country,currency,exchange_rate")
+            .append("&sort=country")
+            .append("&page[number]=")
+            .toString();
 
         List<CurrencyConversionModel.CurrencyItem> result = Arrays.asList(1, 2).parallelStream().map(page -> {
             ResponseEntity<CurrencyConversionModel> response =
