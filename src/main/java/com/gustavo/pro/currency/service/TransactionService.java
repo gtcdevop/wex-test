@@ -63,6 +63,7 @@ public class TransactionService {
         );
         trm.setDescription(te.getDescription());
         trm.setTransacionDate(te.getTransacionDate());
+        trm.setExchangeDate(currencyEntity.getDate());
         trm.setId(te.getId());
         return trm;
     }

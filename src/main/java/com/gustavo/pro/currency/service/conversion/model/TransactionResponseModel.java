@@ -19,6 +19,12 @@ public class TransactionResponseModel  {
     @JsonProperty("transaction_date")
     public LocalDate transacionDate;
 
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    @JsonProperty("exchange_date")
+    public LocalDate exchangeDate;
+
+
     @JsonProperty("description")
     public String description;
 
