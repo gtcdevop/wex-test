@@ -53,6 +53,8 @@ public class TransactionController {
     @GetMapping(value = "/{id}/{countryCode}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getTransactionByIdAndConvertedCurrency(
             @PathVariable Long id, @PathVariable String countryCode) {
-        return ResponseEntity.ok("");
+
+        return this.transactionService.getTransactionByIdAndCountryAndMakeConversion(id, countryCode);
+
     }
 }

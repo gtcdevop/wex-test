@@ -7,10 +7,10 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 
 @Data
-public class CurrencyConversionModel {
+public class CurrencyConversionApiQueryModel {
     ArrayList<CurrencyItem> data;
 
-    CurrencyConversionModel() {}
+    CurrencyConversionApiQueryModel() {}
 
     @Data
     public static class CurrencyItem {

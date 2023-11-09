@@ -1,11 +1,17 @@
 package com.gustavo.pro.currency.service;
 
+import com.gustavo.pro.currency.entity.CurrencyEntity;
 import com.gustavo.pro.currency.entity.TransactionEntity;
+import com.gustavo.pro.currency.exceptions.NotFoundException;
 import com.gustavo.pro.currency.repository.TransactionRepository;
+import com.gustavo.pro.currency.service.conversion.model.TransactionResponseModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @Service
@@ -14,6 +20,9 @@ public class TransactionService {
     @Autowired
     TransactionRepository transactionRepository;
 
+    @Autowired
+    CurrencyConversionService currencyConversionService;
+
     public TransactionEntity checkValidTransactionSaveInDatabase(TransactionEntity transaction) {
         TransactionEntity te = this.transactionRepository.save(transaction);
         return te;
@@ -21,6 +30,42 @@ public class TransactionService {
 
     public TransactionEntity getTransactionFromId(long transactionId) {
         Optional<TransactionEntity> te = this.transactionRepository.findById(transactionId);
-        return te.get();
+        try {
+            return te.get();
+
+        } catch (NoSuchElementException e) {
+            throw new NotFoundException();
+        }
     }
+
+    public ResponseEntity<?> getTransactionByIdAndCountryAndMakeConversion(long transactionId, String country) {
+        TransactionEntity te = this.getTransactionFromId(transactionId);
+        if (te == null) {
+            return ResponseEntity.notFound().build();
+        } else {
+            CurrencyEntity currency = this.currencyConversionService.getCurrencyExchangeRateByCountryAndByDate(
+                    country,
+                    te.getTransacionDate()
+            );
+            // build the response
+            return ResponseEntity.ok(generateTransactionResponseEntity(currency, te));
+        }
+    }
+
+    private TransactionResponseModel generateTransactionResponseEntity(CurrencyEntity currencyEntity, TransactionEntity te) {
+        TransactionResponseModel trm = new TransactionResponseModel();
+        trm.setAmount(te.getAmount());
+        trm.setCountry(currencyEntity.getCountry());
+        trm.setConvertedValue(
+                BigDecimal.valueOf(
+                        te.getAmount()*currencyEntity.getRate()
+                ).setScale(2, RoundingMode.HALF_UP)
+        );
+        trm.setDescription(te.getDescription());
+        trm.setTransacionDate(te.getTransacionDate());
+        trm.setId(te.getId());
+        return trm;
+    }
+
+
 }
