@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 @ResponseStatus(value = HttpStatus.NO_CONTENT, reason = "Exchange rate not found in 6 months")
 public class CurrencyNotExchangebleException extends RuntimeException{
-    CurrencyNotExchangebleException() {
+    public CurrencyNotExchangebleException() {
         super();
     }
 }

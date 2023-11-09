@@ -1,6 +1,7 @@
 package com.gustavo.pro.currency.service;
 
 import com.gustavo.pro.currency.entity.CurrencyEntity;
+import com.gustavo.pro.currency.exceptions.CountryNotFoundException;
 import com.gustavo.pro.currency.repository.CurrencyRepository;
 import com.gustavo.pro.currency.service.conversion.CurrencyApiQuery;
 import com.gustavo.pro.currency.service.conversion.model.CurrencyConversionApiQueryModel;
@@ -35,6 +36,9 @@ public class CurrencyConversionService {
             });
         }
         currency = this.currencyRepository.findByDateAndAndCountry(date, country);
+        if(this.currencyRepository.countByDate(date) > 0 && currency== null) {
+            throw new CountryNotFoundException();
+        }
         return currency;
     }
 

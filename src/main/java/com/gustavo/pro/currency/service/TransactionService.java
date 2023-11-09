@@ -2,6 +2,7 @@ package com.gustavo.pro.currency.service;
 
 import com.gustavo.pro.currency.entity.CurrencyEntity;
 import com.gustavo.pro.currency.entity.TransactionEntity;
+import com.gustavo.pro.currency.exceptions.CurrencyNotExchangebleException;
 import com.gustavo.pro.currency.exceptions.NotFoundException;
 import com.gustavo.pro.currency.repository.TransactionRepository;
 import com.gustavo.pro.currency.service.conversion.model.TransactionResponseModel;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.LocalDate;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
@@ -43,11 +45,19 @@ public class TransactionService {
         if (te == null) {
             return ResponseEntity.notFound().build();
         } else {
-            CurrencyEntity currency = this.currencyConversionService.getCurrencyExchangeRateByCountryAndByDate(
-                    country,
-                    te.getTransacionDate()
-            );
+            CurrencyEntity currency = null;
+            int dateToSubtract = 0;
+            LocalDate dateToQuery = te.getTransacionDate();
+            do {
+                currency= this.currencyConversionService.getCurrencyExchangeRateByCountryAndByDate(
+                        country,dateToQuery);
+                dateToSubtract++;
+                dateToQuery = dateToQuery.minusDays(dateToSubtract);
+            } while(currency == null && dateToSubtract < 183 );
             // build the response
+            if(currency == null ) {
+                throw new CurrencyNotExchangebleException();
+            }
             return ResponseEntity.ok(generateTransactionResponseEntity(currency, te));
         }
     }
